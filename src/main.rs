@@ -1,4 +1,5 @@
 use std::fs;
+use std::thread;
 use std::io::prelude::*;
 use std::net::TcpStream;
 use std::net::TcpListener;
@@ -8,7 +9,10 @@ fn main() {
 
   for stream in listener.incoming() {
     let stream = stream.unwrap();
-    handle_connection(stream);
+
+    thread::spawn(|| {
+        handle_connection(stream);
+    });
   }
 }
 
