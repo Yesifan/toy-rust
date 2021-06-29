@@ -1,5 +1,9 @@
 #[macro_use] extern crate rocket;
 mod lark;
+mod response;
+
+use rocket::serde::{Serialize, json::Json};
+use response::Response;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -16,7 +20,21 @@ async fn login() -> String {
     }
 }
 
+#[derive(Serialize)]
+struct Message {
+    id: u8,
+    message: String
+}
+
+#[get("/json")]
+async fn json() -> Response<Message> {
+    Ok(Json(Message {
+        id: 1,
+        message: String::from("message"),
+    }))
+}
+
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/api", routes![index, login])
+    rocket::build().mount("/api", routes![index, login, json])
 }
